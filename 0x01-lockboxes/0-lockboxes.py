@@ -1,21 +1,32 @@
 #!/usr/bin/python3
+'''LockBoxes Challenge'''
+
 
 def canUnlockAll(boxes):
-    # Set to keep track of unlocked boxes
-    unlocked_boxes = {0}
+    '''determines if all the boxes can be opened or not
+    Returns:
+        True: all boxes can be opened
+        False: not all boxes can be opened
+    '''
+    length = len(boxes)
+    keys = set()
+    opened_boxes = []
+    i = 0
 
-    # Queue for BFS
-    keys_queue = boxes[0][:]
+    while i < length:
+        oldi = i
+        opened_boxes.append(i)
+        keys.update(boxes[i])
+        for key in keys:
+            if key != 0 and key < length and key not in opened_boxes:
+                i = key
+                break
+        if oldi != i:
+            continue
+        else:
+            break
 
-    # Perform BFS
-    while keys_queue:
-        key = keys_queue.pop(0)
-
-        # Check if the key corresponds to a new box
-        if key < len(boxes) and key not in unlocked_boxes:
-            unlocked_boxes.add(key)
-            keys_queue.extend(boxes[key])
-
-    # Check if all boxes can be unlocked
-    return len(unlocked_boxes) == len(boxes)
-
+    for i in range(length):
+        if i not in opened_boxes and i != 0:
+            return False
+    return True
