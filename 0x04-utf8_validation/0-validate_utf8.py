@@ -1,41 +1,31 @@
 #!/usr/bin/python3
-
 """
-    Module for a function called validITF8
+A method that determines if a given data set represents
+a valid UTF-8 encoding 
 """
-
-
-def check(num):
-    """
-        checks for a valid byte
-    """
-
-    mask = 1 << (8 - 1)
-    i = 0
-    while num & mask:
-        mask >>= 1
-        i += 1
-    return i
 
 
 def validUTF8(data):
     """
-        A function that checks if a series of bytes are
-        valid UTF-8
+    function to validate utf-8 encoding
+    Args:
+        data(list): data set containing multiple characters
+    Returns:
+        boolean: true if the data is valid utf-8 encoded, 
+        otherwise false
     """
-
-    i = 0
-    while i < len(data):
-        if data[i] > 255:
-            return False
-        j = check(data[i])
-        k = i + j - (j != 0)
-        i += 1
-        if j == 1 or j > 4 or k > len(data):
-            return False
-        while i < len(data) and i <= k:
-            cur = check(data[i])
-            if cur != 1:
+    utf8valid = 0
+    for val in data:
+        byte = val & 255
+        if utf8valid:
+            if byte >> 6 != 2:
                 return False
-            i += 1
-    return True
+            utf8valid -= 1
+            continue
+        while (1 << abs(7 - utf8valid)) & byte:
+            utf8valid += 1
+        if utf8valid == 1 or utf8valid > 4:
+            return False
+        utf8valid = max(utf8valid - 1, 0)
+    return utf8valid == 0
+
